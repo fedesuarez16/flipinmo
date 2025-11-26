@@ -142,9 +142,13 @@ export default function Features() {
             <p className="text-xl font-light text-gray-700 mb-8 max-w-2xl mx-auto">
               Únete a las inmobiliarias que ya están automatizando sus ventas con Flip
             </p>
-            <button className="bg-gray-900 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-800 transition-colors shadow-lg">
+            <a 
+            href="https://calendar.app.google/4rC6HTH9hAZHG8XP7"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-gray-900 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-800 transition-colors shadow-lg">
               Solicitar Demo Gratuita →
-            </button>
+            </a>
           </div>
         </div>
       </div>

@@ -9,75 +9,87 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
-    <header className=" top-0  z-50 w-full bg-white/70 backdrop-blur-md">
-      <nav className="max-w-7xl fixed w-full z-50 mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <Image 
-              src="/logo.png" 
-              alt="Flip" 
-              width={180} 
-              height={60}
-              className="h-32  w-auto"
-              priority
-            />
-          </div>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-gray-700 hover:text-primary-600 transition-colors">
-              Características
-            </a>
-            <a href="#contact" className="text-gray-700 hover:text-primary-600 transition-colors">
-              Contacto
-            </a>
-            <button className="bg-black text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors">
-              Solicitar Demo
-            </button>
+    <header className="relative w-full">
+      {/* Navigation Bar - Fixed */}
+      <nav className="sticky top-0 z-50 w-full bg-gradient-to-r from-orange-50 via-pink-50 to-white backdrop-blur-sm border-b border-gray-400">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <Image 
+                src="/logo.png" 
+                alt="Flip" 
+                width={180} 
+                height={60}
+                className="h-32 w-auto"
+                priority
+              />
+            </div>
+            
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-12">
+              <a href="#features" className="text-gray-700 hover:text-primary-600 transition-colors">
+                Características
+              </a>
+              <a href="#contact" className="text-gray-700 hover:text-primary-600 transition-colors">
+                Contacto
+              </a>
+              <a
+                href="https://calendar.app.google/4rC6HTH9hAZHG8XP7"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-black text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+              >
+                Solicitar Demo
+              </a>
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="text-gray-700 hover:text-primary-600"
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  {isMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-primary-600"
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                {isMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
+          {/* Mobile Navigation */}
+          {isMenuOpen && (
+            <div className="md:hidden py-4 space-y-4">
+              <a href="#features" className="block text-gray-700 hover:text-primary-600 transition-colors">
+                Características
+              </a>
+              <a href="#contact" className="block text-gray-700 hover:text-primary-600 transition-colors">
+                Contacto
+              </a>
+              <a 
+              href="https://calendar.app.google/4rC6HTH9hAZHG8XP7"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                Solicitar Demo
+              </a>
+            </div>
+          )}
         </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 space-y-4">
-            <a href="#features" className="block text-gray-700 hover:text-primary-600 transition-colors">
-              Características
-            </a>
-            <a href="#contact" className="block text-gray-700 hover:text-primary-600 transition-colors">
-              Contacto
-            </a>
-            <button className="w-full bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors">
-              Solicitar Demo
-            </button>
-          </div>
-        )}
       </nav>
 
       {/* Hero Section */}
-      <section className="relative min-h-[600px] md:min-h-[700px] overflow-hidden">
+      <section className="relative min-h-[600px] md:min-h-screen overflow-hidden">
         {/* Background with gradient and grid pattern */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-r from-orange-50 via-pink-50 to-white"></div>
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 mt-20">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="grid md:grid-cols-3 gap-8 items-center">
             {/* Left Section - Text Content (2/3) */}
             <div className="md:col-span-2 space-y-8">
@@ -95,9 +107,13 @@ export default function Header() {
                 <p className="text-gray-600 mb-4 text-lg">
                   Únete a <span className="font-bold text-gray-900">12,420</span> inmobiliarias que ya están automatizando sus ventas
                 </p>
-                <button className="bg-gray-900 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-800 transition-colors shadow-lg">
+                <a 
+                href="https://calendar.app.google/4rC6HTH9hAZHG8XP7"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-gray-900 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-800 transition-colors shadow-lg relative z-10">
                   Comenzar Ahora →
-                </button>
+                </a>
               </div>
             </div>
 
