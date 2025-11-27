@@ -135,7 +135,7 @@ export default function Features() {
 
         {/* CTA Section */}
         <div className="mt-20 text-center">
-          <div className="relative backdrop-blur-xl bg-white/70 rounded-2xl shadow-2xl p-12 border border-white/20">
+          <div className="relative backdrop-blur-xl bg-gradient-to-r from-orange-50 via-pink-50 to-white rounded-2xl shadow-2xl p-12 border border-white/20">
             <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               ¿Listo para transformar tu negocio inmobiliario?
             </h3>

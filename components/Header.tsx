@@ -95,7 +95,7 @@ export default function Header() {
             <div className="md:col-span-2 space-y-8">
               <h2 className="text-5xl md:text-6xl lg:text-6xl font-bold text-gray-900 leading-tight">
                 Responde, capta y vende
-                <span className="font-light"> Todo en automatico</span>
+                <span className="font-light"> Todo en automático</span>
               </h2>
               <p className="text-xl md:text-2xl font-light text-gray-700 max-w-2xl leading-relaxed">
                 Automatiza todo el proceso inmobiliario desde que entra un lead hasta que se concierta 
@@ -105,7 +105,7 @@ export default function Header() {
               {/* CTA Section */}
               <div className="pt-8">
                 <p className="text-gray-600 mb-4 text-lg">
-                  Únete a <span className="font-bold text-gray-900">12,420</span> inmobiliarias que ya están automatizando sus ventas
+                  Únete a <span className="font-bold text-gray-900">las miles</span> deinmobiliarias que ya están automatizando sus ventas
                 </p>
                 <a 
                 href="https://calendar.app.google/4rC6HTH9hAZHG8XP7"
