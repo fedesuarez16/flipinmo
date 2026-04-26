@@ -1,80 +1,91 @@
 import Image from 'next/image'
 
+const columns = [
+  {
+    title: 'Producto',
+    links: [
+      { label: 'Funnel Inteligente', href: '#producto' },
+      { label: 'Matcheo Inteligente', href: '#producto' },
+      { label: 'Centro de comando', href: '#crm' },
+    ],
+  },
+  {
+    title: 'Verticales',
+    links: [
+      { label: 'Inmobiliarias', href: '#verticales' },
+      { label: 'Concesionarias', href: '#verticales' },
+      { label: 'Clínicas', href: '#verticales' },
+      { label: 'Academias', href: '#verticales' },
+      { label: 'E-commerce', href: '#verticales' },
+    ],
+  },
+  {
+    title: 'Empresa',
+    links: [
+      { label: 'Sobre Flip', href: '#empresa' },
+      { label: 'Casos de éxito', href: '#empresa' },
+      { label: 'Contacto', href: '#contacto' },
+    ],
+  },
+]
+
 export default function Footer() {
   return (
-    <footer id="contact" className="bg-gray-900 text-gray-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand */}
-          <div className="col-span-1 md:col-span-2">
-            <div className="mb-4">
-              <Image 
-                src="/logo.png" 
-                alt="Flip" 
-                width={180} 
-                height={60}
-                className="h-28 w-auto brightness-0 invert"
-              />
-            </div>
-            <p className="mb-4 max-w-md">
-              La plataforma que automatiza todo el proceso inmobiliario, desde el lead hasta la venta cerrada. 
-              Transforma tu negocio con herramientas inteligentes.
+    <footer id="contacto" className="bg-ink text-white/60">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 gap-10 md:grid-cols-5">
+          <div className="col-span-2">
+            <Image
+              src="/logo.png"
+              alt="Flip"
+              width={120}
+              height={40}
+              className="h-8 w-auto brightness-0 invert"
+            />
+            <p className="mt-4 max-w-sm font-serif text-base italic text-beige-200">
+              El copiloto de IA para ventas y atención.
             </p>
-            
+            <p className="mt-2 max-w-sm text-sm">
+              Una sola plataforma para cualquier negocio que vive de sus leads.
+            </p>
+            <div className="mt-6 space-y-1 text-sm">
+              <a
+                href="mailto:coflipweb@gmail.com"
+                className="block transition-colors hover:text-white"
+              >
+                coflipweb@gmail.com
+              </a>
+              <a
+                href="tel:+5491133370937"
+                className="block transition-colors hover:text-white"
+              >
+                +54 9 11 3337-0937
+              </a>
+            </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-white font-semibold mb-4">Enlaces Rápidos</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="#features" className="hover:text-white transition-colors">
-                  Características
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Precios
-                </a>
-              </li>
-              
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Blog
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h4 className="text-white font-semibold mb-4">Contacto</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="mailto:coflipweb@gmail.com" className="hover:text-white transition-colors">
-                  coflipweb@gmail.com
-                </a>
-              </li>
-              <li>
-                <a href="tel:+1234567890" className="hover:text-white transition-colors">
-                  +54 9 11 3337-0937
-                </a>
-              </li>
-              <li className="pt-4">
-                <a
-                href="https://calendar.app.google/4rC6HTH9hAZHG8XP7"
-                target="_blank"
-                rel="noopener noreferrer"
-                 className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors">
-                  Solicitar Demo
-                </a>
-              </li>
-            </ul>
-          </div>
+          {columns.map((col) => (
+            <div key={col.title}>
+              <h4 className="font-serif text-base italic text-beige-200">{col.title}</h4>
+              <ul className="mt-4 space-y-3 text-sm">
+                {col.links.map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      className="transition-colors hover:text-white"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        <div className="border-t border-gray-800 mt-12 pt-8 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} Flip. Todos los derechos reservados.</p>
+        <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-8 text-xs sm:flex-row sm:items-center">
+          <p>© {new Date().getFullYear()} Flip. Todos los derechos reservados.</p>
+          <p className="font-serif italic text-beige-200">Hecho para negocios que viven de sus leads.</p>
         </div>
       </div>
     </footer>

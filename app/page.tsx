@@ -1,12 +1,24 @@
-import Header from '@/components/Header'
+import Hero from '@/components/Hero'
+import Verticals from '@/components/Verticals'
 import Features from '@/components/Features'
-import Efficiency from '@/components/Efficiency'
+import CommandCenter from '@/components/CommandCenter'
+import CaseStudy from '@/components/CaseStudy'
+import CTA from '@/components/CTA'
 import Footer from '@/components/Footer'
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gray-100">
-     
-    </main>
+    <>
+      <main>
+        <Hero />
+        <Verticals />
+        <CommandCenter />
+        <Features />
+
+        <CaseStudy />
+        <CTA />
+      </main>
+      <Footer />
+    </>
   )
 }
