@@ -12,11 +12,11 @@ const columns = [
   {
     title: 'Verticales',
     links: [
-      { label: 'Inmobiliarias', href: '#verticales' },
-      { label: 'Concesionarias', href: '#verticales' },
-      { label: 'Clínicas', href: '#verticales' },
-      { label: 'Academias', href: '#verticales' },
-      { label: 'E-commerce', href: '#verticales' },
+      { label: 'Inmobiliarias', href: '#contacto' },
+      { label: 'Concesionarias', href: '#contacto' },
+      { label: 'Clínicas', href: '#contacto' },
+      { label: 'Academias', href: '#contacto' },
+      { label: 'E-commerce', href: '#contacto' },
     ],
   },
   {

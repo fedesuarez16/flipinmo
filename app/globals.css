@@ -33,3 +33,371 @@ body {
   display: flex;
   width: max-content;
 }
+
+/* Funnel Inteligente — seguimiento cíclico */
+@keyframes funnel-step-1 {
+  0%, 4%   { opacity: 0; transform: translateY(8px); }
+  10%, 92% { opacity: 1; transform: translateY(0); }
+  98%, 100% { opacity: 0; transform: translateY(-6px); }
+}
+@keyframes funnel-step-2 {
+  0%, 24%  { opacity: 0; transform: translateY(8px); }
+  30%, 92% { opacity: 1; transform: translateY(0); }
+  98%, 100% { opacity: 0; transform: translateY(-6px); }
+}
+@keyframes funnel-step-3 {
+  0%, 44%  { opacity: 0; transform: translateY(8px); }
+  50%, 92% { opacity: 1; transform: translateY(0); }
+  98%, 100% { opacity: 0; transform: translateY(-6px); }
+}
+@keyframes funnel-step-4 {
+  0%, 64%  { opacity: 0; transform: translateY(8px); }
+  70%, 92% { opacity: 1; transform: translateY(0); }
+  98%, 100% { opacity: 0; transform: translateY(-6px); }
+}
+
+@keyframes funnel-temp {
+  0%, 8%    { width: 6%; }
+  25%       { width: 28%; }
+  50%       { width: 54%; }
+  75%       { width: 80%; }
+  92%, 100% { width: 96%; }
+}
+
+@keyframes funnel-badge-1 {
+  0%, 22%   { opacity: 1; }
+  28%, 100% { opacity: 0; }
+}
+@keyframes funnel-badge-2 {
+  0%, 22%   { opacity: 0; }
+  28%, 47%  { opacity: 1; }
+  53%, 100% { opacity: 0; }
+}
+@keyframes funnel-badge-3 {
+  0%, 47%   { opacity: 0; }
+  53%, 72%  { opacity: 1; }
+  78%, 100% { opacity: 0; }
+}
+@keyframes funnel-badge-4 {
+  0%, 72%   { opacity: 0; }
+  78%, 100% { opacity: 1; }
+}
+
+.animate-funnel-step-1 { animation: funnel-step-1 12s ease-in-out infinite; }
+.animate-funnel-step-2 { animation: funnel-step-2 12s ease-in-out infinite; }
+.animate-funnel-step-3 { animation: funnel-step-3 12s ease-in-out infinite; }
+.animate-funnel-step-4 { animation: funnel-step-4 12s ease-in-out infinite; }
+.animate-funnel-temp   { animation: funnel-temp 12s ease-in-out infinite; width: 6%; }
+.animate-funnel-badge-1 { animation: funnel-badge-1 12s linear infinite; }
+.animate-funnel-badge-2 { animation: funnel-badge-2 12s linear infinite; opacity: 0; }
+.animate-funnel-badge-3 { animation: funnel-badge-3 12s linear infinite; opacity: 0; }
+.animate-funnel-badge-4 { animation: funnel-badge-4 12s linear infinite; opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-funnel-step-1,
+  .animate-funnel-step-2,
+  .animate-funnel-step-3,
+  .animate-funnel-step-4,
+  .animate-funnel-badge-1,
+  .animate-funnel-badge-2,
+  .animate-funnel-badge-3,
+  .animate-funnel-badge-4,
+  .animate-funnel-temp {
+    animation: none;
+  }
+  .animate-funnel-step-1,
+  .animate-funnel-step-2,
+  .animate-funnel-step-3,
+  .animate-funnel-step-4 {
+    opacity: 1;
+  }
+  .animate-funnel-badge-4 { opacity: 1; }
+  .animate-funnel-temp { width: 96%; }
+}
+
+/* Matcheo Inteligente — scan + match + envío */
+@keyframes match-scan-1 {
+  0%, 8%    { background-color: #ffffff; }
+  14%, 22%  { background-color: #faf6ef; }
+  28%, 100% { background-color: #ffffff; }
+}
+@keyframes match-scan-2 {
+  0%, 24%   { background-color: #ffffff; }
+  30%, 38%  { background-color: #faf6ef; }
+  44%, 100% { background-color: #ffffff; }
+}
+@keyframes match-scan-3 {
+  /* Visit at 40-50%, then permanent match highlight from 55%; release before loop */
+  0%, 38%   { background-color: #ffffff; box-shadow: none; }
+  44%, 50%  { background-color: #faf6ef; box-shadow: none; }
+  55%, 92%  { background-color: #faf6ef; box-shadow: inset 3px 0 0 #a4895a; }
+  98%, 100% { background-color: #ffffff; box-shadow: none; }
+}
+@keyframes match-scan-4 {
+  0%, 50%   { background-color: #ffffff; }
+  56%, 64%  { background-color: #faf6ef; }
+  70%, 100% { background-color: #ffffff; }
+}
+
+@keyframes match-status-1 { /* "Buscando..." */
+  0%, 52%   { opacity: 1; }
+  58%, 92%  { opacity: 0; }
+  98%, 100% { opacity: 1; }
+}
+@keyframes match-status-2 { /* "Match encontrado" */
+  0%, 52%   { opacity: 0; }
+  58%, 92%  { opacity: 1; }
+  98%, 100% { opacity: 0; }
+}
+
+@keyframes match-badge {
+  0%, 55%   { opacity: 0; transform: scale(0.85); }
+  62%, 92%  { opacity: 1; transform: scale(1); }
+  98%, 100% { opacity: 0; transform: scale(0.85); }
+}
+
+@keyframes match-channel-1 {
+  0%, 65% {
+    background-color: #ffffff;
+    color: rgb(64 64 64);
+    border-color: rgb(229 229 229);
+  }
+  72%, 92% {
+    background-color: #0a0a0a;
+    color: #ffffff;
+    border-color: #0a0a0a;
+  }
+  98%, 100% {
+    background-color: #ffffff;
+    color: rgb(64 64 64);
+    border-color: rgb(229 229 229);
+  }
+}
+
+@keyframes match-send {
+  0%, 78%   { opacity: 0; transform: translateY(6px); }
+  86%, 92%  { opacity: 1; transform: translateY(0); }
+  98%, 100% { opacity: 0; transform: translateY(0); }
+}
+
+.animate-match-scan-1   { animation: match-scan-1 12s ease-in-out infinite; }
+.animate-match-scan-2   { animation: match-scan-2 12s ease-in-out infinite; }
+.animate-match-scan-3   { animation: match-scan-3 12s ease-in-out infinite; }
+.animate-match-scan-4   { animation: match-scan-4 12s ease-in-out infinite; }
+.animate-match-status-1 { animation: match-status-1 12s ease-in-out infinite; }
+.animate-match-status-2 { animation: match-status-2 12s ease-in-out infinite; opacity: 0; }
+.animate-match-badge    { animation: match-badge 12s ease-in-out infinite; opacity: 0; }
+.animate-match-channel-1 { animation: match-channel-1 12s ease-in-out infinite; }
+.animate-match-send     { animation: match-send 12s ease-in-out infinite; opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-match-scan-1,
+  .animate-match-scan-2,
+  .animate-match-scan-3,
+  .animate-match-scan-4,
+  .animate-match-status-1,
+  .animate-match-status-2,
+  .animate-match-badge,
+  .animate-match-channel-1,
+  .animate-match-send {
+    animation: none;
+  }
+  .animate-match-status-1 { opacity: 0; }
+  .animate-match-status-2 { opacity: 1; }
+  .animate-match-scan-3 {
+    background-color: #faf6ef;
+    box-shadow: inset 3px 0 0 #a4895a;
+  }
+  .animate-match-badge { opacity: 1; transform: scale(1); }
+  .animate-match-channel-1 {
+    background-color: #0a0a0a;
+    color: #ffffff;
+    border-color: #0a0a0a;
+  }
+  .animate-match-send { opacity: 1; transform: translateY(0); }
+}
+
+/* Automatización Completa — pipeline + activity feed + KPIs */
+@keyframes pipe-line {
+  0%, 8%    { width: 0; }
+  22%       { width: 33.33%; }
+  47%       { width: 66.66%; }
+  72%, 92%  { width: 100%; }
+  98%, 100% { width: 0; }
+}
+
+@keyframes pipe-dot-1 {
+  0%, 8% {
+    background-color: #ffffff;
+    border-color: rgb(229 229 229);
+    color: rgb(115 115 115);
+  }
+  15%, 92% {
+    background-color: #0a0a0a;
+    border-color: #0a0a0a;
+    color: #ffffff;
+  }
+  98%, 100% {
+    background-color: #ffffff;
+    border-color: rgb(229 229 229);
+    color: rgb(115 115 115);
+  }
+}
+@keyframes pipe-dot-2 {
+  0%, 28% {
+    background-color: #ffffff;
+    border-color: rgb(229 229 229);
+    color: rgb(115 115 115);
+  }
+  35%, 92% {
+    background-color: #0a0a0a;
+    border-color: #0a0a0a;
+    color: #ffffff;
+  }
+  98%, 100% {
+    background-color: #ffffff;
+    border-color: rgb(229 229 229);
+    color: rgb(115 115 115);
+  }
+}
+@keyframes pipe-dot-3 {
+  0%, 53% {
+    background-color: #ffffff;
+    border-color: rgb(229 229 229);
+    color: rgb(115 115 115);
+  }
+  60%, 92% {
+    background-color: #0a0a0a;
+    border-color: #0a0a0a;
+    color: #ffffff;
+  }
+  98%, 100% {
+    background-color: #ffffff;
+    border-color: rgb(229 229 229);
+    color: rgb(115 115 115);
+  }
+}
+@keyframes pipe-dot-4 {
+  0%, 75% {
+    background-color: #ffffff;
+    border-color: rgb(229 229 229);
+    color: rgb(115 115 115);
+  }
+  82%, 92% {
+    background-color: #0a0a0a;
+    border-color: #0a0a0a;
+    color: #ffffff;
+  }
+  98%, 100% {
+    background-color: #ffffff;
+    border-color: rgb(229 229 229);
+    color: rgb(115 115 115);
+  }
+}
+
+@keyframes pipe-act-1 {
+  0%, 5%    { opacity: 0; transform: translateY(4px); }
+  12%, 25%  { opacity: 1; transform: translateY(0); }
+  32%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes pipe-act-2 {
+  0%, 28%   { opacity: 0; transform: translateY(4px); }
+  35%, 47%  { opacity: 1; transform: translateY(0); }
+  54%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes pipe-act-3 {
+  0%, 50%   { opacity: 0; transform: translateY(4px); }
+  57%, 70%  { opacity: 1; transform: translateY(0); }
+  77%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes pipe-act-4 {
+  0%, 72%   { opacity: 0; transform: translateY(4px); }
+  79%, 92%  { opacity: 1; transform: translateY(0); }
+  98%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+
+@keyframes pipe-kpi-1-old {
+  0%, 65%   { opacity: 1; }
+  70%, 92%  { opacity: 0; }
+  98%, 100% { opacity: 1; }
+}
+@keyframes pipe-kpi-1-new {
+  0%, 65%   { opacity: 0; }
+  70%, 92%  { opacity: 1; }
+  98%, 100% { opacity: 0; }
+}
+@keyframes pipe-kpi-2-old {
+  0%, 55%   { opacity: 1; }
+  60%, 92%  { opacity: 0; }
+  98%, 100% { opacity: 1; }
+}
+@keyframes pipe-kpi-2-new {
+  0%, 55%   { opacity: 0; }
+  60%, 92%  { opacity: 1; }
+  98%, 100% { opacity: 0; }
+}
+@keyframes pipe-kpi-3-old {
+  0%, 80%   { opacity: 1; }
+  85%, 92%  { opacity: 0; }
+  98%, 100% { opacity: 1; }
+}
+@keyframes pipe-kpi-3-new {
+  0%, 80%   { opacity: 0; }
+  85%, 92%  { opacity: 1; }
+  98%, 100% { opacity: 0; }
+}
+
+.animate-pipe-line       { animation: pipe-line 12s ease-in-out infinite; }
+.animate-pipe-dot-1      { animation: pipe-dot-1 12s ease-in-out infinite; }
+.animate-pipe-dot-2      { animation: pipe-dot-2 12s ease-in-out infinite; }
+.animate-pipe-dot-3      { animation: pipe-dot-3 12s ease-in-out infinite; }
+.animate-pipe-dot-4      { animation: pipe-dot-4 12s ease-in-out infinite; }
+.animate-pipe-act-1      { animation: pipe-act-1 12s ease-in-out infinite; opacity: 0; }
+.animate-pipe-act-2      { animation: pipe-act-2 12s ease-in-out infinite; opacity: 0; }
+.animate-pipe-act-3      { animation: pipe-act-3 12s ease-in-out infinite; opacity: 0; }
+.animate-pipe-act-4      { animation: pipe-act-4 12s ease-in-out infinite; opacity: 0; }
+.animate-pipe-kpi-1-old  { animation: pipe-kpi-1-old 12s ease-in-out infinite; }
+.animate-pipe-kpi-1-new  { animation: pipe-kpi-1-new 12s ease-in-out infinite; opacity: 0; }
+.animate-pipe-kpi-2-old  { animation: pipe-kpi-2-old 12s ease-in-out infinite; }
+.animate-pipe-kpi-2-new  { animation: pipe-kpi-2-new 12s ease-in-out infinite; opacity: 0; }
+.animate-pipe-kpi-3-old  { animation: pipe-kpi-3-old 12s ease-in-out infinite; }
+.animate-pipe-kpi-3-new  { animation: pipe-kpi-3-new 12s ease-in-out infinite; opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pipe-line,
+  .animate-pipe-dot-1,
+  .animate-pipe-dot-2,
+  .animate-pipe-dot-3,
+  .animate-pipe-dot-4,
+  .animate-pipe-act-1,
+  .animate-pipe-act-2,
+  .animate-pipe-act-3,
+  .animate-pipe-act-4,
+  .animate-pipe-kpi-1-old,
+  .animate-pipe-kpi-1-new,
+  .animate-pipe-kpi-2-old,
+  .animate-pipe-kpi-2-new,
+  .animate-pipe-kpi-3-old,
+  .animate-pipe-kpi-3-new {
+    animation: none;
+  }
+  .animate-pipe-line { width: 100%; }
+  .animate-pipe-dot-1,
+  .animate-pipe-dot-2,
+  .animate-pipe-dot-3,
+  .animate-pipe-dot-4 {
+    background-color: #0a0a0a;
+    border-color: #0a0a0a;
+    color: #ffffff;
+  }
+  .animate-pipe-act-1,
+  .animate-pipe-act-2,
+  .animate-pipe-act-3 { opacity: 0; }
+  .animate-pipe-act-4 { opacity: 1; }
+  .animate-pipe-kpi-1-old,
+  .animate-pipe-kpi-2-old,
+  .animate-pipe-kpi-3-old { opacity: 0; }
+  .animate-pipe-kpi-1-new,
+  .animate-pipe-kpi-2-new,
+  .animate-pipe-kpi-3-new { opacity: 1; }
+}
