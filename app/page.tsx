@@ -14,12 +14,13 @@ export default function Home() {
     <>
       <main>
         <Hero />
+        <AutomatizacionCompleta />
         <WhyItMatters />
-        <CommandCenter />
-        <Features />
         <FunnelInteligente />
         <MatcheoInteligente />
-        <AutomatizacionCompleta />
+        <CommandCenter />
+
+        <Features />
 
         <CaseStudy />
         <CTA />

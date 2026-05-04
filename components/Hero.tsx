@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Header from './Header'
 
-const DEMO_URL = 'https://calendar.app.google/4rC6HTH9hAZHG8XP7'
+const WAITLIST_URL = 'https://tally.so/r/oblMg1'
 
 const stats = [
   { value: '90%', label: 'Tasa de respuesta automática' },
@@ -50,12 +50,12 @@ export default function Hero() {
 
         <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <a
-            href={DEMO_URL}
+            href={WAITLIST_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center rounded-full bg-beige-100 px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-white"
           >
-            Habla con nosotros
+            Sumate a la waitlist
           </a>
           <a
             href="#producto"

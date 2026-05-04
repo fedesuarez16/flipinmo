@@ -1,0 +1,31 @@
+# Flip prospecting — example queries.
+# One per line. Blank lines and lines starting with '#' are ignored.
+# Run with:
+#   npm run prospect-batch -- scripts/queries.example.txt
+#
+# Tip: each query returns up to 60 results, so partition large universes
+# by zone or sub-keyword. Duplicates across queries are merged automatically
+# into a single row with a `source_queries` column.
+
+# Inmobiliarias — CABA por barrio
+inmobiliarias en Palermo, Buenos Aires
+inmobiliarias en Recoleta, Buenos Aires
+inmobiliarias en Belgrano, Buenos Aires
+inmobiliarias en Caballito, Buenos Aires
+inmobiliarias en Villa Crespo, Buenos Aires
+
+# Clinicas esteticas / dentales
+clinicas esteticas en Palermo, Buenos Aires
+clinicas esteticas en Recoleta, Buenos Aires
+clinicas dentales en Belgrano, Buenos Aires
+
+# Concesionarias de autos
+concesionarias de autos en CABA
+concesionarias de autos en zona norte GBA
+
+# Academias online / centros de formacion
+academias online Argentina
+centros de formacion profesional Buenos Aires
+
+# Agencias de viajes
+agencias de viajes en Buenos Aires

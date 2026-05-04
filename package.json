@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prospect": "node --env-file=.env --import tsx scripts/prospect.ts",
+    "prospect-batch": "node --env-file=.env --import tsx scripts/prospect-batch.ts",
+    "scrape-emails": "node --env-file=.env --import tsx scripts/scrape-emails.ts"
   },
   "dependencies": {
     "next": "^14.0.0",
@@ -21,6 +24,7 @@
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
+    "tsx": "^4.19.0",
     "typescript": "^5.2.2"
   }
 }

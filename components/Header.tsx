@@ -9,7 +9,7 @@ const navLinks = [
   { href: '#contacto', label: 'Contacto' },
 ]
 
-const DEMO_URL = 'https://calendar.app.google/4rC6HTH9hAZHG8XP7'
+const WAITLIST_URL = 'https://tally.so/r/oblMg1'
 
 export default function Header() {
   const [open, setOpen] = useState(false)
@@ -42,12 +42,12 @@ export default function Header() {
 
         <div className="hidden items-center gap-3 md:flex">
           <a
-            href={DEMO_URL}
+            href={WAITLIST_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center rounded-full bg-beige-100 px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-white"
           >
-            Habla con nosotros
+            Sumate a la waitlist
           </a>
         </div>
 
@@ -86,12 +86,12 @@ export default function Header() {
               </a>
             ))}
             <a
-              href={DEMO_URL}
+              href={WAITLIST_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-2 block rounded-full bg-beige-100 px-4 py-2 text-center text-sm font-medium text-ink"
             >
-              Habla con nosotros
+              Sumate a la waitlist
             </a>
           </div>
         </div>
