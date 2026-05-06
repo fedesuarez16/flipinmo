@@ -1,7 +1,7 @@
 import 'server-only'
 
 import type Anthropic from '@anthropic-ai/sdk'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 
 // ─── JSONB content block shapes ──────────────────────────────────────────────
 // These mirror Anthropic's content array serialised verbatim into Postgres.
@@ -38,7 +38,7 @@ export type ContentBlock = TextBlock | ToolUseBlock | ToolResultBlock
  * the session already exists.
  */
 async function getOrCreateSession(clientSessionId: string): Promise<string> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('chat_sessions')
     .upsert(
       { client_session_id: clientSessionId, updated_at: new Date().toISOString() },
@@ -67,7 +67,7 @@ export async function loadHistory(
 ): Promise<Anthropic.MessageParam[]> {
   const sessionId = await getOrCreateSession(clientSessionId)
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('chat_messages')
     .select('role, content')
     .eq('session_id', sessionId)
@@ -108,7 +108,7 @@ export async function appendMessage(
       ? [{ type: 'text', text: content }]
       : content
 
-  const { error } = await supabase.from('chat_messages').insert({
+  const { error } = await getSupabase().from('chat_messages').insert({
     session_id: sessionId,
     role,
     content: blocks,
@@ -128,7 +128,7 @@ export async function appendMessage(
 export async function resetSession(clientSessionId: string): Promise<void> {
   const sessionId = await getOrCreateSession(clientSessionId)
 
-  const { error } = await supabase
+  const { error } = await getSupabase()
     .from('chat_messages')
     .delete()
     .eq('session_id', sessionId)

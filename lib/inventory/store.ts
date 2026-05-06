@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -52,7 +52,7 @@ export async function listItems(
 ): Promise<InventoryItem[]> {
   const limit = filters.limit ?? 8
 
-  let q = supabase.from('inventory_items').select('*').limit(limit)
+  let q = getSupabase().from('inventory_items').select('*').limit(limit)
 
   if (filters.query) {
     const likeVal = `%${filters.query}%`
@@ -97,7 +97,7 @@ export async function listItems(
 // ─── getItemById ─────────────────────────────────────────────────────────────
 
 export async function getItemById(id: string): Promise<InventoryItem | null> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('inventory_items')
     .select('*')
     .eq('id', id)
@@ -128,7 +128,7 @@ export async function upsertItems(
   let inserted = 0
 
   // Insert in batch for efficiency; fall back to row-by-row on batch failure.
-  const { error: batchError } = await supabase
+  const { error: batchError } = await getSupabase()
     .from('inventory_items')
     .insert(items)
 
@@ -137,7 +137,7 @@ export async function upsertItems(
   } else {
     // Batch rejected — insert row by row to collect per-row errors.
     for (let i = 0; i < items.length; i++) {
-      const { error: rowError } = await supabase
+      const { error: rowError } = await getSupabase()
         .from('inventory_items')
         .insert(items[i])
 
@@ -155,7 +155,7 @@ export async function upsertItems(
 // ─── deleteItem ───────────────────────────────────────────────────────────────
 
 export async function deleteItem(id: string): Promise<void> {
-  const { error } = await supabase
+  const { error } = await getSupabase()
     .from('inventory_items')
     .delete()
     .eq('id', id)
@@ -173,7 +173,7 @@ export async function deleteItem(id: string): Promise<void> {
  * we use a "not equals a nil UUID" trick that always matches all real rows.
  */
 export async function clearAll(): Promise<{ deleted: number }> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('inventory_items')
     .delete()
     .neq('id', '00000000-0000-0000-0000-000000000000')

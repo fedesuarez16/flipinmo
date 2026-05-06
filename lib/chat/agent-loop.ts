@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { anthropic, MODEL } from '@/lib/anthropic'
+import { getAnthropic, MODEL } from '@/lib/anthropic'
 import { SYSTEM_PROMPT } from '@/lib/chat/system-prompt'
 import { appendMessage, loadHistory } from '@/lib/chat/history'
 import { writeText, writeTool, writeError, writeDone } from '@/lib/chat/sse'
@@ -43,6 +43,7 @@ export async function runAgent({
   let history = await loadHistory(sessionId)
 
   for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+    const anthropic = getAnthropic()
     let sdkStream: ReturnType<typeof anthropic.messages.stream>
 
     try {
