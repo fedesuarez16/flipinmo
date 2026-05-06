@@ -2,6 +2,8 @@ import 'server-only'
 
 import type Anthropic from '@anthropic-ai/sdk'
 import { getSupabase } from '@/lib/supabase'
+import { resetLeadProfile } from '@/lib/chat/profile'
+import { resetFollowups } from '@/lib/chat/followups'
 
 // ─── JSONB content block shapes ──────────────────────────────────────────────
 // These mirror Anthropic's content array serialised verbatim into Postgres.
@@ -122,10 +124,24 @@ export async function appendMessage(
 }
 
 /**
- * Deletes all chat_messages for a session without removing the session row.
- * Used by DELETE /api/chat to give the user a clean slate.
+ * Resets a session to a clean slate: clears the lead_profile FIRST, then
+ * deletes all chat_messages. Order is intentional per design D-11:
+ * - If profile reset fails → 500 is returned and messages remain intact
+ *   (partial state where messages survive is less confusing than the reverse).
+ * - If profile reset succeeds and message delete fails → profile is already
+ *   cleared; the caller should propagate the error.
+ *
+ * Used by DELETE /api/chat.
  */
 export async function resetSession(clientSessionId: string): Promise<void> {
+  // Step 1: reset profile FIRST (D-11). Throws on failure → caller gets 500,
+  // messages are untouched.
+  await resetLeadProfile(clientSessionId)
+
+  // Step 1b: reset followups. Same cascade rule — fail before touching messages.
+  await resetFollowups(clientSessionId)
+
+  // Step 2: delete messages.
   const sessionId = await getOrCreateSession(clientSessionId)
 
   const { error } = await getSupabase()

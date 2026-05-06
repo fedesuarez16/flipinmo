@@ -3,8 +3,15 @@ import 'server-only'
 import { getAnthropic, MODEL } from '@/lib/anthropic'
 import { SYSTEM_PROMPT } from '@/lib/chat/system-prompt'
 import { appendMessage, loadHistory } from '@/lib/chat/history'
-import { writeText, writeTool, writeError, writeDone } from '@/lib/chat/sse'
-import { TOOL_DEFINITIONS, runTool } from '@/lib/chat/tools'
+import {
+  writeText,
+  writeTool,
+  writeError,
+  writeDone,
+  writeProfile,
+  writeFollowups,
+} from '@/lib/chat/sse'
+import { TOOL_DEFINITIONS, runTool, type ToolOutcome } from '@/lib/chat/tools'
 import type Anthropic from '@anthropic-ai/sdk'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -95,18 +102,38 @@ export async function runAgent({
 
       for (const tu of toolUseBlocks) {
         writeTool(controller, tu.name, 'running')
+        console.log(`[agent-loop] tool call: ${tu.name}`, JSON.stringify(tu.input))
 
-        let result: unknown
+        let outcome: ToolOutcome
         try {
-          result = await runTool(tu.name, tu.input as Record<string, unknown>)
+          outcome = await runTool(
+            tu.name,
+            tu.input as Record<string, unknown>,
+            { sessionId },
+          )
+          console.log(
+            `[agent-loop] tool ${tu.name} ok — profileUpdate=${
+              outcome.profileUpdate ? 'yes' : 'no'
+            }`,
+          )
         } catch (toolErr) {
-          result = { error: toolErr instanceof Error ? toolErr.message : String(toolErr) }
+          console.error(`[agent-loop] tool ${tu.name} FAILED:`, toolErr)
+          outcome = { result: { error: toolErr instanceof Error ? toolErr.message : String(toolErr) } }
+        }
+
+        // SSE order per design §5: tool(running) → tool(done) → profile/followups → text
+        writeTool(controller, tu.name, 'done')
+        if (outcome.profileUpdate) {
+          writeProfile(controller, outcome.profileUpdate)
+        }
+        if (outcome.followupsUpdate) {
+          writeFollowups(controller, outcome.followupsUpdate)
         }
 
         toolResults.push({
           type: 'tool_result',
           tool_use_id: tu.id,
-          content: JSON.stringify(result),
+          content: JSON.stringify(outcome.result),
         })
       }
 

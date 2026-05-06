@@ -2,6 +2,8 @@
 // No 'server-only' guard needed here — this module has no SDK deps and is
 // only ever called from API route handlers (which are already server-side).
 
+import type { Followup, LeadProfile } from '@/lib/chat/profile-types'
+
 const encoder = new TextEncoder()
 
 function write(
@@ -52,4 +54,28 @@ export function writeDone(
   controller: ReadableStreamDefaultController<Uint8Array>,
 ): void {
   write(controller, `event: done\ndata: {}\n\n`)
+}
+
+/**
+ * Emits: event: profile\ndata: {full LeadProfile JSON}\n\n
+ * Carries the FULL profile (not a diff) so the client can atomically replace
+ * its local state. Only emitted when a tool call produces a profileUpdate.
+ */
+export function writeProfile(
+  controller: ReadableStreamDefaultController<Uint8Array>,
+  profile: LeadProfile,
+): void {
+  write(controller, `event: profile\ndata: ${JSON.stringify(profile)}\n\n`)
+}
+
+/**
+ * Emits: event: followups\ndata: [Followup, ...]\n\n
+ * Carries the FULL followups array so the client can atomically replace state.
+ * Only emitted after a successful schedule_followup tool call.
+ */
+export function writeFollowups(
+  controller: ReadableStreamDefaultController<Uint8Array>,
+  followups: Followup[],
+): void {
+  write(controller, `event: followups\ndata: ${JSON.stringify(followups)}\n\n`)
 }
