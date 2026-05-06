@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>La estrategia de las inmobiliarias más eficientes — Flip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --cream: #f7f4ee;
+    --beige-50: #faf7f1;
+    --beige-100: #f1ebdf;
+    --beige-200: #e6dcc7;
+    --beige-300: #d6c7a6;
+    --beige-400: #c2ad84;
+    --beige-500: #a88f63;
+    --beige-600: #846f4c;
+    --neutral-400: #a3a3a3;
+    --neutral-500: #737373;
+    --neutral-600: #525252;
+    --neutral-700: #404040;
+    --neutral-800: #262626;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--ink);
+    background: #ddd;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .serif { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; }
+
+  .page {
+    width: 210mm;
+    height: 297mm;
+    padding: 22mm 20mm;
+    margin: 12px auto;
+    background: var(--cream);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page.dark {
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  /* ---------- Cover ---------- */
+  .cover { padding: 22mm 20mm; }
+  .cover .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: auto;
+  }
+  .cover .logo {
+    height: 28px;
+    filter: brightness(0) invert(1);
+  }
+  .cover .eyebrow {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--beige-300);
+    letter-spacing: 0.02em;
+  }
+  .cover .title {
+    font-size: 64px;
+    line-height: 1.02;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin-bottom: 32px;
+  }
+  .cover .title em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--beige-300);
+  }
+  .cover .subtitle {
+    font-size: 18px;
+    line-height: 1.5;
+    color: rgba(247, 244, 238, 0.75);
+    max-width: 480px;
+    margin-bottom: 40px;
+  }
+  .cover .accent-line {
+    width: 80px;
+    height: 2px;
+    background: var(--beige-400);
+    margin-bottom: 40px;
+  }
+  .cover .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: 13px;
+    color: rgba(247, 244, 238, 0.6);
+    border-top: 1px solid rgba(247, 244, 238, 0.15);
+    padding-top: 20px;
+  }
+  .cover .meta .right { text-align: right; }
+  .cover .meta strong { color: var(--cream); font-weight: 500; }
+
+  /* ---------- Generic interior ---------- */
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--beige-200);
+    margin-bottom: 28px;
+  }
+  .header-row .brand {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .header-row .pageno {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--neutral-500);
+  }
+
+  .eyebrow {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--beige-600);
+    margin-bottom: 12px;
+  }
+
+  h1.section-title {
+    font-size: 42px;
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    max-width: 90%;
+  }
+  h1.section-title em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--beige-600);
+  }
+
+  .lede {
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--neutral-700);
+    max-width: 92%;
+    margin-bottom: 28px;
+  }
+
+  p { font-size: 14px; line-height: 1.6; color: var(--neutral-700); }
+  p + p { margin-top: 12px; }
+
+  .source {
+    font-size: 11px;
+    color: var(--neutral-500);
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+  }
+
+  /* ---------- Stat blocks ---------- */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .stat-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+  .stat-card {
+    background: white;
+    border: 1px solid var(--beige-200);
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .stat-card .num {
+    font-size: 56px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .stat-card.cols-3 .num,
+  .stat-grid.cols-3 .stat-card .num { font-size: 44px; }
+  .stat-grid.cols-4 .stat-card .num { font-size: 36px; }
+  .stat-card .label {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--neutral-700);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .stat-card .src {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--neutral-500);
+    margin-top: auto;
+  }
+
+  .stat-card.dark { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .stat-card.dark .num { color: var(--cream); }
+  .stat-card.dark .label { color: rgba(247, 244, 238, 0.75); }
+  .stat-card.dark .src { color: rgba(247, 244, 238, 0.5); }
+
+  .stat-card.beige { background: var(--beige-100); border-color: var(--beige-200); }
+
+  /* ---------- Bar chart (decay curve) ---------- */
+  .chart {
+    background: white;
+    border: 1px solid var(--beige-200);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .chart h3 {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--neutral-600);
+    margin-bottom: 20px;
+  }
+  .bar-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 90px;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--beige-100);
+  }
+  .bar-row:last-child { border-bottom: none; }
+  .bar-row .lbl { font-size: 13px; font-weight: 500; color: var(--ink); }
+  .bar-row .bar-track { height: 24px; background: var(--beige-50); border-radius: 4px; overflow: hidden; }
+  .bar-row .bar-fill { height: 100%; background: var(--ink); border-radius: 4px; }
+  .bar-row .bar-fill.beige { background: var(--beige-400); }
+  .bar-row .bar-fill.beige-dark { background: var(--beige-600); }
+  .bar-row .bar-fill.faded { background: var(--neutral-400); }
+  .bar-row .val { font-size: 13px; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Big highlight number ---------- */
+  .hero-stat {
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 12px;
+    padding: 36px 32px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  .hero-stat .big {
+    font-size: 110px;
+    line-height: 0.9;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    color: var(--beige-300);
+  }
+  .hero-stat .copy {
+    flex: 1;
+  }
+  .hero-stat .copy .lead {
+    font-size: 20px;
+    line-height: 1.35;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  .hero-stat .copy .sub {
+    font-size: 13px;
+    color: rgba(247, 244, 238, 0.65);
+  }
+  .hero-stat .copy .sub em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+  }
+
+  /* ---------- Playbook steps ---------- */
+  .step {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 20px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--beige-200);
+  }
+  .step:last-child { border-bottom: none; }
+  .step .num-circle {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 38px;
+    color: var(--beige-500);
+    line-height: 1;
+  }
+  .step h4 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .step p {
+    font-size: 13px;
+    color: var(--neutral-700);
+    line-height: 1.55;
+  }
+
+  /* ---------- Quote / pull ---------- */
+  .pull {
+    border-left: 3px solid var(--beige-400);
+    padding: 12px 18px;
+    margin: 20px 0;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.4;
+    color: var(--neutral-800);
+  }
+
+  /* ---------- Use cases (cómo aplicarlo) ---------- */
+  .use-case {
+    background: white;
+    border: 1px solid var(--beige-200);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+  }
+  .use-case .where {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--beige-600);
+    margin-bottom: 6px;
+  }
+  .use-case .quote {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ---------- CTA page ---------- */
+  .cta-page { padding: 22mm 20mm; }
+  .cta-page .logo {
+    height: 28px;
+    filter: brightness(0) invert(1);
+    margin-bottom: auto;
+  }
+  .cta-page .pre {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--beige-300);
+    margin-bottom: 16px;
+  }
+  .cta-page .big-line {
+    font-size: 56px;
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin-bottom: 24px;
+    max-width: 90%;
+  }
+  .cta-page .big-line em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--beige-300);
+  }
+  .cta-page .cta-sub {
+    font-size: 16px;
+    line-height: 1.55;
+    color: rgba(247, 244, 238, 0.75);
+    max-width: 520px;
+    margin-bottom: 36px;
+  }
+  .cta-page .cta-button {
+    display: inline-block;
+    background: var(--cream);
+    color: var(--ink);
+    padding: 14px 28px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    margin-bottom: 20px;
+  }
+  .cta-page .cta-url {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--beige-300);
+    margin-bottom: 32px;
+  }
+  .cta-page .footer-info {
+    margin-top: auto;
+    padding-top: 24px;
+    border-top: 1px solid rgba(247, 244, 238, 0.15);
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: rgba(247, 244, 238, 0.6);
+  }
+
+  /* ---------- TOC ---------- */
+  .toc-list { margin-top: 8px; }
+  .toc-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--beige-200);
+  }
+  .toc-item:last-child { border-bottom: none; }
+  .toc-item .t-num {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--beige-500);
+    width: 36px;
+  }
+  .toc-item .t-title {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .toc-item .t-page {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--neutral-500);
+  }
+
+  /* ---------- Print ---------- */
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  @media print {
+    html, body { background: white; }
+    .page {
+      margin: 0;
+      page-break-after: always;
+      break-after: page;
+      box-shadow: none;
+    }
+    .page:last-child { page-break-after: auto; break-after: auto; }
+  }
+  @media screen {
+    .page { box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="page dark cover">
+  <div class="top">
+    <img class="logo" src="logo.png" alt="Flip" />
+    <span class="eyebrow">— Guía Flip · 2026</span>
+  </div>
+
+  <div style="margin-top: auto;">
+    <div class="accent-line"></div>
+    <div class="eyebrow" style="font-size:15px; margin-bottom: 18px;">— Para inmobiliarias que quieren cerrar más</div>
+    <h1 class="title">La <em>estrategia</em><br/>de las inmobiliarias<br/>más eficientes.</h1>
+    <p class="subtitle">El protocolo de respuesta y seguimiento que multiplica conversiones por 21x — basado en datos de MIT, Forbes, HubSpot y ZoomInfo.</p>
+  </div>
+
+  <div class="meta">
+    <div>
+      <div style="margin-bottom: 4px;">Una guía de</div>
+      <strong>Flip — Copiloto de ventas con IA</strong>
+    </div>
+    <div class="right">
+      <div style="margin-bottom: 4px;">12 páginas · Lectura: 8 min</div>
+      <strong>2026</strong>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TOC / INTRO ============ -->
+<section class="page">
+  <div class="header-row">
+    <span class="brand">Flip · Guía Inmobiliarias</span>
+    <span class="pageno">— 02</span>
+  </div>
+
+  <div class="eyebrow">— Lo que vas a encontrar</div>
+  <h1 class="section-title">Cómo trabajan las inmobiliarias <em>que cierran</em> 3x más que el promedio.</h1>
+  <p class="lede">No es suerte, ni mejor cartera, ni más presupuesto en marketing. Es un <strong>protocolo</strong>: cómo responden el primer minuto, cómo califican, y cómo siguen al lead hasta el toque número 8. Esta guía resume esa estrategia en datos duros y un plan accionable.</p>
+
+  <div class="toc-list">
+    <div class="toc-item">
+      <span class="t-num">01</span>
+      <span class="t-title">La velocidad lo es todo: por qué los primeros 5 minutos definen la venta</span>
+      <span class="t-page">03</span>
+    </div>
+    <div class="toc-item">
+      <span class="t-num">02</span>
+      <span class="t-title">La curva de caída de conversión, minuto a minuto</span>
+      <span class="t-page">04</span>
+    </div>
+    <div class="toc-item">
+      <span class="t-num">03</span>
+      <span class="t-title">El comprador siempre elige al primero que responde</span>
+      <span class="t-page">05</span>
+    </div>
+    <div class="toc-item">
+      <span class="t-num">04</span>
+      <span class="t-title">El costo real de no responder a tiempo</span>
+      <span class="t-page">06</span>
+    </div>
+    <div class="toc-item">
+      <span class="t-num">05</span>
+      <span class="t-title">Seguimiento: la otra mitad de la ecuación</span>
+      <span class="t-page">07</span>
+    </div>
+    <div class="toc-item">
+      <span class="t-num">06</span>
+      <span class="t-title">Frecuencia ideal: ¿cuántos toques para cerrar?</span>
+      <span class="t-page">08</span>
+    </div>
+    <div class="toc-item">
+      <span class="t-num">07</span>
+      <span class="t-title">El canal correcto: por qué WhatsApp le gana a todo</span>
+      <span class="t-page">09</span>
+    </div>
+    <div class="toc-item">
+      <span class="t-num">08</span>
+      <span class="t-title">Playbook — 5 pasos para implementarlo esta semana</span>
+      <span class="t-page">10</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 01 — VELOCIDAD ============ -->
+<section class="page">
+  <div class="header-row">
+    <span class="brand">01 · La velocidad lo es todo</span>
+    <span class="pageno">— 03</span>
+  </div>
+
+  <div class="eyebrow">— Capítulo 01</div>
+  <h1 class="section-title">Los primeros <em>5 minutos</em> deciden la venta.</h1>
+  <p class="lede">Hay décadas de investigación que prueban lo mismo: la probabilidad de calificar y cerrar un lead se desploma minuto a minuto. No es una opinión, es física comercial.</p>
+
+  <div class="hero-stat">
+    <div class="big">21x</div>
+    <div class="copy">
+      <div class="lead">más chances de calificar un lead respondiendo en menos de 5 minutos vs. 30 minutos.</div>
+      <div class="sub"><em>— MIT + InsideSales.com</em></div>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card beige">
+      <div class="num">100x</div>
+      <div class="label">más probable convertir un lead respondido en 5 minutos vs. uno respondido en 30.</div>
+      <div class="src">— LeadResponseManagement.org</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">47 hs</div>
+      <div class="label">es el tiempo promedio de respuesta de las empresas hoy.</div>
+      <div class="src">— Forbes / InsideSales</div>
+    </div>
+  </div>
+
+  <div class="pull">El primer minuto multiplica conversiones por casi 4x respecto al quinto. Cada minuto que pasa, baja un 1,5%. — Velocify / Kixie</div>
+</section>
+
+<!-- ============ 02 — CURVA DE CAÍDA ============ -->
+<section class="page">
+  <div class="header-row">
+    <span class="brand">02 · Curva de caída</span>
+    <span class="pageno">— 04</span>
+  </div>
+
+  <div class="eyebrow">— Capítulo 02</div>
+  <h1 class="section-title">La conversión <em>cae</em> minuto a minuto.</h1>
+  <p class="lede">Esta es la curva que ninguna inmobiliaria mira — y es la única que importa. La diferencia entre responder en 1 minuto y en 1 hora no es marginal: es de casi <strong>5 órdenes de magnitud</strong>.</p>
+
+  <div class="chart">
+    <h3>Probabilidad relativa de conversión según tiempo de respuesta</h3>
+
+    <div class="bar-row">
+      <span class="lbl">Menos de 1 min</span>
+      <div class="bar-track"><div class="bar-fill beige-dark" style="width: 100%;"></div></div>
+      <span class="val" style="color: var(--beige-600);">+391%</span>
+    </div>
+    <div class="bar-row">
+      <span class="lbl">Menos de 5 min</span>
+      <div class="bar-track"><div class="bar-fill" style="width: 60%;"></div></div>
+      <span class="val">Base</span>
+    </div>
+    <div class="bar-row">
+      <span class="lbl">10 minutos</span>
+      <div class="bar-track"><div class="bar-fill faded" style="width: 12%;"></div></div>
+      <span class="val">−80%</span>
+    </div>
+    <div class="bar-row">
+      <span class="lbl">30 minutos</span>
+      <div class="bar-track"><div class="bar-fill faded" style="width: 3%;"></div></div>
+      <span class="val">−95%</span>
+    </div>
+    <div class="bar-row">
+      <span class="lbl">1 hora o más</span>
+      <div class="bar-track"><div class="bar-fill faded" style="width: 0.6%;"></div></div>
+      <span class="val">−99%</span>
+    </div>
+  </div>
+
+  <p class="source">Fuente: Velocify / Kixie / LeadResponseManagement.org · Probabilidad relativa, normalizada al benchmark de 5 minutos.</p>
+
+  <div class="pull" style="margin-top: 24px;">A los 60 minutos, el lead ya no es un lead. Es estadística.</div>
+</section>
+
+<!-- ============ 03 — EL PRIMERO GANA ============ -->
+<section class="page">
+  <div class="header-row">
+    <span class="brand">03 · El primero gana</span>
+    <span class="pageno">— 05</span>
+  </div>
+
+  <div class="eyebrow">— Capítulo 03</div>
+  <h1 class="section-title">El comprador <em>elige</em> al primero que responde.</h1>
+  <p class="lede">Esto es lo que más sorprende: el cierre no depende del precio, ni de la marca, ni de la ubicación. Depende de quién levanta el teléfono primero.</p>
+
+  <div class="hero-stat">
+    <div class="big">78%</div>
+    <div class="copy">
+      <div class="lead">de los compradores elige la primera empresa que le responde, independientemente del precio o la marca.</div>
+      <div class="sub"><em>— Website Builder / Vendasta</em></div>
+    </div>
+  </div>
+
+  <div style="background: var(--beige-100); border-radius: 8px; padding: 24px; margin-bottom: 20px;">
+    <div class="eyebrow" style="margin-bottom: 8px;">— Lo que pasa específicamente en inmobiliarias</div>
+    <p style="font-size: 15px; line-height: 1.5; color: var(--ink); font-weight: 500;">El lead inmobiliario no manda un solo mensaje. Manda <strong>3 a 5 simultáneos</strong> a distintas inmobiliarias buscando la misma propiedad o zona. La que responde primero, se queda con la conversación. Las otras cuatro nunca se enteran de que estuvieron compitiendo.</p>
+  </div>
+
+  <p class="source">El lead promedio de portales (Zonaprop, Argenprop, Mercado Libre) recibe respuesta de la primera inmobiliaria entre 30 minutos y varias horas después. La que responde en menos de 5 minutos toma una ventaja casi imposible de revertir.</p>
+</section>
+
+<!-- ============ 04 — COSTO DE NO RESPONDER ============ -->
+<section class="page">
+  <div class="header-row">
+    <span class="brand">04 · El costo de no responder</span>
+    <span class="pageno">— 06</span>
+  </div>
+
+  <div class="eyebrow">— Capítulo 04</div>
+  <h1 class="section-title">Lo que pasa cuando <em>no</em> respondés a tiempo.</h1>
+  <p class="lede">No respondés rápido no significa "respondés más tarde". Significa que el lead ya cerró con otro, ya se enfrió, o nunca te volvió a abrir un mensaje.</p>
+
+  <div class="stat-grid cols-4" style="margin-bottom: 20px;">
+    <div class="stat-card">
+      <div class="num">30%</div>
+      <div class="label">de leads sin respuesta rápida va directo a la competencia.</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">51%</div>
+      <div class="label">de leads nunca es contactado en absoluto.</div>
+    </div>
+    <div class="stat-card beige">
+      <div class="num">71%</div>
+      <div class="label">de los leads de internet se pierde por mal seguimiento.</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">82%</div>
+      <div class="label">de los consumidores espera respuesta en menos de 10 minutos.</div>
+    </div>
+  </div>
+
+  <p class="source" style="margin-bottom: 24px;">— Forbes, InsideSales, HubSpot 2024</p>
+
+  <div class="hero-stat">
+    <div class="big">63%</div>
+    <div class="copy">
+      <div class="lead">de las empresas no responde un lead inbound en absoluto.</div>
+      <div class="sub"><em>— RevenueHero, 2024 (estudio sobre +1.000 empresas)</em></div>
+    </div>
+  </div>
+
+  <div class="pull">Si tu inmobiliaria responde — aunque sea tarde — ya estás arriba del 63% del mercado. Si respondés en 5 minutos, estás arriba del 99%.</div>
+</section>
+
+<!-- ============ 05 — SEGUIMIENTO ============ -->
+<section class="page">
+  <div class="header-row">
+    <span class="brand">05 · La otra mitad: seguimiento</span>
+    <span class="pageno">— 07</span>
+  </div>
+
+  <div class="eyebrow">— Capítulo 05</div>
+  <h1 class="section-title">Responder rápido no alcanza. <em>Hay que seguir.</em></h1>
+  <p class="lede">El error más común es pensar que si el lead no contesta el primer mensaje, está perdido. Los datos dicen lo contrario: la mayoría de las ventas se cierra entre el toque 5 y el 8.</p>
+
+  <div class="stat-grid cols-3">
+    <div class="stat-card">
+      <div class="num">80%</div>
+      <div class="label">de las ventas requieren entre 5 y 8 contactos antes de cerrar.</div>
+      <div class="src">— Qwilr / Sales research</div>
+    </div>
+    <div class="stat-card beige">
+      <div class="num">+70%</div>
+      <div class="label">más conversiones cuando los reps hacen intentos adicionales de contacto.</div>
+      <div class="src">— Martal / Velocify</div>
+    </div>
+    <div class="stat-card dark">
+      <div class="num">1,3</div>
+      <div class="label">intentos de contacto promedio antes de que un vendedor abandone el lead.</div>
+      <div class="src">— InsideSales</div>
+    </div>
+  </div>
+
+  <div class="pull">El 80% de las ventas necesita 5–8 toques. El asesor promedio hace 1,3. La oportunidad está exactamente en ese gap.</div>
+
+  <p style="margin-top: 16px;">Traducido: la mayoría de los leads que tu equipo da por "fríos" o "no interesados" en realidad nunca recibieron suficientes intentos de contacto. No es un problema de calidad de lead — es un problema de proceso.</p>
+</section>
+
+<!-- ============ 06 — FRECUENCIA ============ -->
+<section class="page">
+  <div class="header-row">
+    <span class="brand">06 · Frecuencia ideal</span>
+    <span class="pageno">— 08</span>
+  </div>
+
+  <div class="eyebrow">— Capítulo 06</div>
+  <h1 class="section-title">¿Cuántos <em>toques</em> hacen falta para cerrar?</h1>
+  <p class="lede">Hay un patrón claro entre las organizaciones de bajo y alto desempeño. Acá está el rango y dónde te conviene apuntar.</p>
+
+  <div class="chart">
+    <h3>Toques de contacto por lead — distribución y resultado</h3>
+
+    <div class="bar-row">
+      <span class="lbl">1 toque</span>
+      <div class="bar-track"><div class="bar-fill faded" style="width: 8%;"></div></div>
+      <span class="val">Raro</span>
+    </div>
+    <div class="bar-row">
+      <span class="lbl">3–4 toques</span>
+      <div class="bar-track"><div class="bar-fill" style="width: 28%;"></div></div>
+      <span class="val">Mínimo</span>
+    </div>
+    <div class="bar-row">
+      <span class="lbl">5–8 toques</span>
+      <div class="bar-track"><div class="bar-fill beige-dark" style="width: 60%;"></div></div>
+      <span class="val" style="color: var(--beige-600);">Óptimo</span>
+    </div>
+    <div class="bar-row">
+      <span class="lbl">+16 toques</span>
+      <div class="bar-track"><div class="bar-fill beige" style="width: 95%;"></div></div>
+      <span class="val">Top performers</span>
+    </div>
+  </div>
+
+  <p class="source">— Las organizaciones de alto crecimiento usan hasta 16 touchpoints en 2–4 semanas (ZoomInfo / Qwilr).</p>
+
+  <div style="background: var(--beige-100); border-radius: 8px; padding: 20px; margin-top: 20px;">
+    <div class="eyebrow" style="margin-bottom: 8px;">— Cadencia recomendada para inmobiliarias</div>
+    <p style="font-size: 14px; line-height: 1.6; color: var(--ink);">
+      <strong>Día 0 — Minuto 1:</strong> respuesta inmediata por WhatsApp.<br/>
+      <strong>Día 0 — Hora 2:</strong> envío de 2–3 propiedades alineadas al brief.<br/>
+      <strong>Día 1:</strong> follow-up "¿pudiste verlas?".<br/>
+      <strong>Día 3:</strong> nueva propiedad o cambio de pricing.<br/>
+      <strong>Día 7:</strong> revisión + invitación a visita.<br/>
+      <strong>Día 14:</strong> check-in de timing y presupuesto.<br/>
+      <strong>Día 21–28:</strong> nurture liviano, alertas de nuevas unidades.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 07 — CANAL ============ -->
+<section class="page">
+  <div class="header-row">
+    <span class="brand">07 · El canal correcto</span>
+    <span class="pageno">— 09</span>
+  </div>
+
+  <div class="eyebrow">— Capítulo 07</div>
+  <h1 class="section-title">WhatsApp <em>le gana</em> a todo lo demás.</h1>
+  <p class="lede">No es opinión: la apertura, el clickthrough y la tasa de respuesta del SMS / WhatsApp arrasan al email. En inmobiliarias, donde la ventana de decisión es corta, esto define el cierre.</p>
+
+  <div class="chart">
+    <h3>Performance por canal de seguimiento</h3>
+
+    <div class="bar-row">
+      <span class="lbl">WhatsApp / SMS — apertura</span>
+      <div class="bar-track"><div class="bar-fill beige-dark" style="width: 98%;"></div></div>
+      <span class="val" style="color: var(--beige-600);">98%</span>
+    </div>
+    <div class="bar-row">
+      <span class="lbl">SMS — clickthrough</span>
+      <div class="bar-track"><div class="bar-fill" style="width: 30%;"></div></div>
+      <span class="val">30%</span>
+    </div>
+    <div class="bar-row">
+      <span class="lbl">Email — apertura</span>
+      <div class="bar-track"><div class="bar-fill faded" style="width: 22%;"></div></div>
+      <span class="val">22%</span>
+    </div>
+  </div>
+
+  <div class="hero-stat" style="margin-top: 20px;">
+    <div class="big">+112%</div>
+    <div class="copy">
+      <div class="lead">aumento de conversión en empresas que hacen seguimiento por SMS / WhatsApp vs. solo email.</div>
+      <div class="sub"><em>— ZoomInfo / GrowthList 2025</em></div>
+    </div>
+  </div>
+
+  <div class="pull">Si tu inmobiliaria sigue persiguiendo leads por email, está peleando una guerra que terminó hace cinco años.</div>
+</section>
+
+<!-- ============ 08 — PLAYBOOK ============ -->
+<section class="page">
+  <div class="header-row">
+    <span class="brand">08 · Playbook accionable</span>
+    <span class="pageno">— 10</span>
+  </div>
+
+  <div class="eyebrow">— Capítulo 08</div>
+  <h1 class="section-title">5 pasos para <em>implementar</em> esta estrategia esta semana.</h1>
+  <p class="lede">Esto no es teoría. Es lo que hacen distinto las inmobiliarias del top 10%, traducido a un protocolo que podés montar sin contratar más asesores ni rehacer el CRM.</p>
+
+  <div>
+    <div class="step">
+      <span class="num-circle">01</span>
+      <div>
+        <h4>Centralizá todos los formularios en un solo canal de respuesta</h4>
+        <p>Zonaprop, Argenprop, Mercado Libre, formularios web, Instagram, llamadas perdidas. Todos los leads tienen que caer en un solo lugar — idealmente WhatsApp Business o un CRM con respuesta automática integrada. Si el lead llega a un mail que se mira a las 9 AM del día siguiente, ya perdiste.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="num-circle">02</span>
+      <div>
+        <h4>Activá una respuesta dentro de los primeros 60 segundos</h4>
+        <p>Aunque sea un mensaje de acuse: <em>"¡Hola! Vi tu consulta sobre [propiedad]. En un minuto te paso info y te hago un par de preguntas para ayudarte mejor."</em> Eso solo te pone arriba del 99% de la competencia y abre la conversación antes de que el lead contacte a otra inmobiliaria.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="num-circle">03</span>
+      <div>
+        <h4>Calificá el lead antes de que llegue al asesor</h4>
+        <p>Tres preguntas alcanzan: <strong>zona</strong>, <strong>presupuesto</strong> y <strong>timing</strong> (¿estás mirando para los próximos 30 días o explorando?). Esto te ahorra horas de asesores hablando con leads que nunca iban a comprar y prioriza los que sí.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="num-circle">04</span>
+      <div>
+        <h4>Programá una secuencia de 5–8 toques en 2–4 semanas</h4>
+        <p>Día 0, 1, 3, 7, 14, 21. Cada toque con motivo: nueva propiedad, cambio de pricing, invitación a visita, recordatorio. No es spam — es seguimiento. El 80% de tus ventas vive entre el toque 5 y el 8 que tu equipo nunca está haciendo.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="num-circle">05</span>
+      <div>
+        <h4>Medí dos números, todas las semanas</h4>
+        <p><strong>Tiempo medio de primera respuesta</strong> y <strong>cantidad de toques por lead antes del cierre o pérdida</strong>. Si no medís estos dos, no estás gestionando ventas — estás esperando que pase algo. Las inmobiliarias eficientes ven estos números todos los lunes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 09 — APLICACIÓN PRÁCTICA ============ -->
+<section class="page">
+  <div class="header-row">
+    <span class="brand">09 · Cómo se ve en la práctica</span>
+    <span class="pageno">— 11</span>
+  </div>
+
+  <div class="eyebrow">— Aplicando los datos</div>
+  <h1 class="section-title">Tres formas de usar <em>esta estrategia</em> mañana.</h1>
+  <p class="lede">Estos datos no son para colgarlos en una pared. Son argumentos. Acá tenés tres ángulos concretos para usarlos en tu día a día.</p>
+
+  <div class="use-case">
+    <div class="where">— En tu sitio web / landing</div>
+    <p class="quote">"El 78% de los compradores elige la primera empresa que responde. Nosotros respondemos en segundos, las 24 horas."</p>
+  </div>
+
+  <div class="use-case">
+    <div class="where">— En el outreach a propietarios</div>
+    <p class="quote">"¿Sabías que esperar 10 minutos reduce las chances de contactar a un interesado un 80%? Nosotros eliminamos esa espera y por eso cerramos más rápido."</p>
+  </div>
+
+  <div class="use-case">
+    <div class="where">— En la presentación al equipo / capacitación interna</div>
+    <p class="quote">"El 71% de los leads de internet se pierde por mal seguimiento. No es un problema de calidad de lead, es de proceso. Vamos a cambiar el proceso."</p>
+  </div>
+
+  <div style="margin-top: 28px; padding: 20px; background: var(--beige-100); border-radius: 8px;">
+    <div class="eyebrow" style="margin-bottom: 8px;">— Lo que separa al top 10%</div>
+    <p style="font-size: 14px; line-height: 1.6; color: var(--ink);">No es la cartera. No es el presupuesto en marketing. No es la antigüedad. Es <strong>responder en menos de 5 minutos, hacer 5–8 toques, y medirlo todas las semanas</strong>. El resto es ruido.</p>
+  </div>
+</section>
+
+<!-- ============ 10 — CTA WAITLIST ============ -->
+<section class="page dark cta-page">
+  <img class="logo" src="logo.png" alt="Flip" />
+
+  <div style="margin-top: auto;">
+    <div class="pre">— Una última cosa</div>
+    <h2 class="big-line">Hacer todo esto a mano <em>no escala.</em></h2>
+    <p class="cta-sub">Por eso construimos Flip: un copiloto de ventas con IA que responde en segundos, califica el lead, hace el seguimiento por vos por WhatsApp, y se integra con los portales que ya usás. Para inmobiliarias que ya entendieron que el primer minuto vale más que cualquier campaña de marketing.</p>
+
+    <a href="https://tally.so/r/oblMg1" class="cta-button">Sumate a la waitlist →</a>
+    <div class="cta-url">tally.so/r/oblMg1</div>
+  </div>
+
+  <div class="footer-info">
+    <div>
+      <div style="margin-bottom: 4px;">Flip — Copiloto de ventas y atención con IA</div>
+      <div>Vertical-agnóstico · Especializado en inmobiliarias</div>
+    </div>
+    <div style="text-align: right;">
+      <div style="margin-bottom: 4px;">coflipweb@gmail.com</div>
+      <div>+54 9 11 3337-0937</div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
