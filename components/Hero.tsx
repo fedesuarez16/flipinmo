@@ -44,7 +44,7 @@ export default function Hero() {
 
         <p className="mx-auto mt-6 max-w-2xl text-base text-white/75 sm:text-lg">
           Automatiza la captación, el seguimiento y el cierre. Vendas
-          departamentos, autos, tratamientos, cursos o productos —
+          departamentos, casas , autos, cursos o productos —
           Flip convierte cada lead en una oportunidad real.
         </p>
 
