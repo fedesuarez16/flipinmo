@@ -21,16 +21,6 @@ type Message = {
 
 const SESSION_STORAGE_KEY = 'flip-chat-session-id'
 
-function buildInitialMessage(): Message {
-  return {
-    id: 'welcome',
-    role: 'assistant',
-    content:
-      'Hola, soy Josías de Inmobiliarias Flip. ¿En qué te puedo ayudar? Contame qué estás buscando.',
-    createdAt: Date.now(),
-  }
-}
-
 const SUGGESTIONS = [
   'Busco un 2 ambientes en Palermo',
   '¿Qué tenés disponible hasta 150 mil dólares?',
@@ -69,9 +59,7 @@ function shallowEqual(a: unknown, b: unknown): boolean {
 }
 
 export default function ChatClient() {
-  const [messages, setMessages] = useState<Message[]>(() => [
-    buildInitialMessage(),
-  ])
+  const [messages, setMessages] = useState<Message[]>(() => [])
   const [input, setInput] = useState('')
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -372,7 +360,7 @@ export default function ChatClient() {
     const fresh = generateSessionId()
     window.localStorage.setItem(SESSION_STORAGE_KEY, fresh)
     setSessionId(fresh)
-    setMessages([buildInitialMessage()])
+    setMessages([])
     setError(null)
   }
 
@@ -466,7 +454,7 @@ export default function ChatClient() {
                 )}
               </ul>
 
-              {messages.length === 1 && !pending && (
+              {messages.length === 0 && !pending && (
                 <div className="mt-6 flex flex-wrap justify-center gap-1.5">
                   {SUGGESTIONS.map((s) => (
                     <button
