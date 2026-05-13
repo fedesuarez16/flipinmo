@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { getAnthropic, MODEL } from '@/lib/anthropic'
-import { SYSTEM_PROMPT } from '@/lib/chat/system-prompt'
+import { getSystemPrompt } from '@/lib/chat/system-prompt'
 import { appendMessage, loadHistory } from '@/lib/chat/history'
 import {
   writeText,
@@ -49,6 +49,10 @@ export async function runAgent({
   await appendMessage(sessionId, 'user', userMessage)
   let history = await loadHistory(sessionId)
 
+  // Read the system prompt once per turn — it can be edited from /admin/inventory
+  // between turns, but must stay stable across iterations within a single turn.
+  const systemPrompt = await getSystemPrompt()
+
   for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
     const anthropic = getAnthropic()
     let sdkStream: ReturnType<typeof anthropic.messages.stream>
@@ -56,7 +60,7 @@ export async function runAgent({
     try {
       sdkStream = anthropic.messages.stream({
         model: MODEL,
-        system: SYSTEM_PROMPT,
+        system: systemPrompt,
         tools: TOOL_DEFINITIONS,
         messages: history,
         max_tokens: 1024,

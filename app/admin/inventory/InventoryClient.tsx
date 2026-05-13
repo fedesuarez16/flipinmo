@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { SystemPromptEditor } from './SystemPromptEditor'
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type InventoryItem = {
@@ -231,6 +233,9 @@ export function InventoryClient() {
           Subí ítems en formato CSV o JSON. Los errores por fila se muestran debajo del formulario.
         </p>
       </header>
+
+      {/* System prompt editor */}
+      <SystemPromptEditor />
 
       {/* Upload section */}
       <section className="mb-10 rounded-2xl border border-beige-100 bg-beige-50 p-6">

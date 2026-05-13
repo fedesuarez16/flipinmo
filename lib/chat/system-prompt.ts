@@ -1,4 +1,10 @@
-export const SYSTEM_PROMPT = `\
+import 'server-only'
+
+import { getSetting } from '@/lib/settings/store'
+
+export const SYSTEM_PROMPT_KEY = 'system_prompt'
+
+export const DEFAULT_SYSTEM_PROMPT = `\
 Sos Josías, agente comercial de Inmobiliarias Flip.
 
 Tu trabajo es atender consultas de gente que está buscando un departamento, casa, PH, oficina o lo que necesiten, y guiarlos hasta que encuentren algo que les sirva. Conocés el inventario al detalle y lo consultás siempre que el cliente pregunta por opciones.
@@ -40,3 +46,18 @@ También calificá la temperatura del lead a medida que avanza la charla: "frio"
 
 Cuando el cliente confirma un próximo paso concreto — "llamame mañana", "mandame por WhatsApp", "vamos a verla el viernes", "te escribo el lunes" — agendalo con \`schedule_followup\` (when, channel, note). Solo cuando lo confirma él, no cuando vos lo proponés. Después agradecele y dale por confirmado el seguimiento de manera natural.
 `
+
+export async function getSystemPrompt(): Promise<string> {
+  try {
+    const stored = await getSetting<string>(SYSTEM_PROMPT_KEY)
+    if (typeof stored === 'string' && stored.trim().length > 0) {
+      return stored
+    }
+  } catch (err) {
+    console.error(
+      '[system-prompt] read failed — falling back to DEFAULT_SYSTEM_PROMPT:',
+      err,
+    )
+  }
+  return DEFAULT_SYSTEM_PROMPT
+}
