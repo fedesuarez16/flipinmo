@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { exportInventoryCsv } from '@/lib/inventory/csv'
 import { SystemPromptEditor } from './SystemPromptEditor'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -11,11 +12,45 @@ type InventoryItem = {
   type: string
   title: string
   location: string
+  zona: string | null
   price: number | null
   currency: string
   bedrooms: number | null
+  bathrooms: number | null
   area_m2: number | null
+  description: string | null
+  features: string[]
   status: string
+}
+
+type FormState = {
+  type: string
+  title: string
+  location: string
+  zona: string
+  price: string
+  currency: string
+  bedrooms: string
+  bathrooms: string
+  area_m2: string
+  description: string
+  features: string
+  status: string
+}
+
+const EMPTY_FORM: FormState = {
+  type: '',
+  title: '',
+  location: '',
+  zona: '',
+  price: '',
+  currency: 'ARS',
+  bedrooms: '',
+  bathrooms: '',
+  area_m2: '',
+  description: '',
+  features: '',
+  status: 'available',
 }
 
 type RowError = {
@@ -61,6 +96,35 @@ function statusClasses(status: string): string {
   }
 }
 
+// ─── Form helpers ─────────────────────────────────────────────────────────────
+
+const inputCls =
+  'w-full rounded-xl border border-beige-200 bg-white px-3 py-2 text-sm text-ink placeholder-neutral-400 focus:border-beige-400 focus:outline-none focus:ring-2 focus:ring-beige-200'
+
+function Field({
+  label,
+  htmlFor,
+  className,
+  children,
+}: {
+  label: string
+  htmlFor: string
+  className?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className={className}>
+      <label
+        htmlFor={htmlFor}
+        className="mb-1 block text-xs font-medium text-neutral-500"
+      >
+        {label}
+      </label>
+      {children}
+    </div>
+  )
+}
+
 // ─── InventoryClient ──────────────────────────────────────────────────────────
 
 export function InventoryClient() {
@@ -75,6 +139,12 @@ export function InventoryClient() {
 
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [clearPending, setClearPending] = useState(false)
+
+  const [formOpen, setFormOpen] = useState(false)
+  const [bulkOpen, setBulkOpen] = useState(false)
+  const [form, setForm] = useState<FormState>(EMPTY_FORM)
+  const [createPending, setCreatePending] = useState(false)
+  const [createError, setCreateError] = useState<string | null>(null)
 
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -217,6 +287,96 @@ export function InventoryClient() {
     }
   }
 
+  // ── Create one item via form ───────────────────────────────────────────────
+
+  const handleCreateItem = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (createPending) return
+
+    if (!form.type.trim() || !form.title.trim() || !form.location.trim()) {
+      setCreateError('Tipo, título y ubicación son obligatorios.')
+      return
+    }
+
+    const parseNum = (raw: string): number | null => {
+      const t = raw.trim()
+      if (!t) return null
+      const n = Number(t)
+      return isNaN(n) ? null : n
+    }
+
+    const features = form.features
+      .split(/[|,]/)
+      .map((f) => f.trim())
+      .filter(Boolean)
+
+    const item = {
+      type: form.type.trim(),
+      title: form.title.trim(),
+      location: form.location.trim(),
+      zona: form.zona.trim() || null,
+      price: parseNum(form.price),
+      currency: form.currency.trim() || 'ARS',
+      bedrooms: parseNum(form.bedrooms),
+      bathrooms: parseNum(form.bathrooms),
+      area_m2: parseNum(form.area_m2),
+      description: form.description.trim() || null,
+      features,
+      status: form.status || 'available',
+    }
+
+    setCreatePending(true)
+    setCreateError(null)
+
+    try {
+      const res = await fetch('/api/admin/inventory', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify([item]),
+      })
+      const json = (await res.json()) as
+        | { inserted: number; errors: RowError[] }
+        | { error: string }
+
+      if ('error' in json) {
+        setCreateError(json.error)
+        return
+      }
+      if (json.errors.length > 0) {
+        setCreateError(json.errors[0].error)
+        return
+      }
+
+      setForm(EMPTY_FORM)
+      setFormOpen(false)
+      await loadItems()
+    } catch {
+      setCreateError('No se pudo conectar con el servidor.')
+    } finally {
+      setCreatePending(false)
+    }
+  }
+
+  // ── Export CSV ─────────────────────────────────────────────────────────────
+
+  const handleExportCsv = () => {
+    if (items.length === 0) return
+    const csv = exportInventoryCsv(items)
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    const stamp = new Date().toISOString().slice(0, 10)
+    a.download = `inventario-${stamp}.csv`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
+  const updateForm = (key: keyof FormState, value: string) =>
+    setForm((prev) => ({ ...prev, [key]: value }))
+
   // ─── Render ─────────────────────────────────────────────────────────────────
 
   return (
@@ -237,75 +397,274 @@ export function InventoryClient() {
       {/* System prompt editor */}
       <SystemPromptEditor />
 
-      {/* Upload section */}
-      <section className="mb-10 rounded-2xl border border-beige-100 bg-beige-50 p-6">
-        <h2 className="mb-3 font-sans text-base font-semibold text-ink">
-          Subir ítems
-        </h2>
+      {/* New property form (collapsible) */}
+      <section className="mb-6 rounded-2xl border border-beige-100 bg-white">
+        <button
+          type="button"
+          onClick={() => setFormOpen((v) => !v)}
+          className="flex w-full items-center justify-between px-6 py-4 text-left"
+        >
+          <span className="font-sans text-base font-semibold text-ink">
+            Nueva propiedad
+          </span>
+          <span className="text-xs text-neutral-500">
+            {formOpen ? 'Cerrar' : 'Cargar manualmente'}
+          </span>
+        </button>
 
-        {/* CSV format hint */}
-        <p className="mb-3 text-xs text-neutral-500">
-          Formato CSV esperado (primera fila = encabezado, features separados por |):
-        </p>
-        <pre className="mb-4 overflow-x-auto rounded-lg bg-ink px-4 py-3 text-xs text-cream">
-          {`type,title,location,price,currency,bedrooms,bathrooms,area_m2,description,features,status\napartment,"Depto Palermo","Palermo, CABA",180000,USD,2,1,52,"Luminoso",pool|garage,available`}
-        </pre>
+        {formOpen && (
+          <form onSubmit={handleCreateItem} className="border-t border-beige-100 px-6 py-5">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Field label="Tipo *" htmlFor="f-type">
+                <input
+                  id="f-type"
+                  type="text"
+                  value={form.type}
+                  onChange={(e) => updateForm('type', e.target.value)}
+                  placeholder="apartment, house, office…"
+                  className={inputCls}
+                />
+              </Field>
 
-        <textarea
-          ref={textareaRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          rows={8}
-          placeholder="Pegá tu CSV o JSON aquí…"
-          className="w-full rounded-xl border border-beige-200 bg-white p-3 font-mono text-xs text-ink placeholder-neutral-400 focus:border-beige-400 focus:outline-none focus:ring-2 focus:ring-beige-200 resize-y"
-        />
+              <Field label="Título *" htmlFor="f-title">
+                <input
+                  id="f-title"
+                  type="text"
+                  value={form.title}
+                  onChange={(e) => updateForm('title', e.target.value)}
+                  placeholder="Depto 2 amb con balcón"
+                  className={inputCls}
+                />
+              </Field>
 
-        <div className="mt-3 flex flex-wrap gap-3">
-          <button
-            onClick={handleUploadCsv}
-            disabled={!input.trim() || pending}
-            className="rounded-full border border-ink bg-ink px-5 py-2 text-sm font-medium text-cream transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            {pending ? 'Subiendo…' : 'Subir CSV'}
-          </button>
+              <Field label="Ubicación *" htmlFor="f-location">
+                <input
+                  id="f-location"
+                  type="text"
+                  value={form.location}
+                  onChange={(e) => updateForm('location', e.target.value)}
+                  placeholder="Palermo, CABA"
+                  className={inputCls}
+                />
+              </Field>
 
-          <button
-            onClick={handleUploadJson}
-            disabled={!input.trim() || pending}
-            className="rounded-full border border-beige-300 bg-white px-5 py-2 text-sm font-medium text-ink transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            {pending ? 'Subiendo…' : 'Subir JSON'}
-          </button>
-        </div>
+              <Field label="Zona" htmlFor="f-zona">
+                <input
+                  id="f-zona"
+                  type="text"
+                  value={form.zona}
+                  onChange={(e) => updateForm('zona', e.target.value)}
+                  placeholder="centro, este, oeste…"
+                  className={inputCls}
+                />
+              </Field>
 
-        {/* Upload result */}
-        {uploadResult && (
-          <div className="mt-4 rounded-xl border border-beige-200 bg-white p-4 text-sm">
-            <p className="font-medium text-ink">
-              {uploadResult.inserted} ítem{uploadResult.inserted !== 1 ? 's' : ''} insertado{uploadResult.inserted !== 1 ? 's' : ''} correctamente.
+              <Field label="Precio" htmlFor="f-price">
+                <input
+                  id="f-price"
+                  type="number"
+                  value={form.price}
+                  onChange={(e) => updateForm('price', e.target.value)}
+                  placeholder="180000"
+                  className={inputCls}
+                />
+              </Field>
+
+              <Field label="Moneda" htmlFor="f-currency">
+                <select
+                  id="f-currency"
+                  value={form.currency}
+                  onChange={(e) => updateForm('currency', e.target.value)}
+                  className={inputCls}
+                >
+                  <option value="ARS">ARS</option>
+                  <option value="USD">USD</option>
+                </select>
+              </Field>
+
+              <Field label="Dormitorios" htmlFor="f-bedrooms">
+                <input
+                  id="f-bedrooms"
+                  type="number"
+                  value={form.bedrooms}
+                  onChange={(e) => updateForm('bedrooms', e.target.value)}
+                  placeholder="2"
+                  className={inputCls}
+                />
+              </Field>
+
+              <Field label="Baños" htmlFor="f-bathrooms">
+                <input
+                  id="f-bathrooms"
+                  type="number"
+                  value={form.bathrooms}
+                  onChange={(e) => updateForm('bathrooms', e.target.value)}
+                  placeholder="1"
+                  className={inputCls}
+                />
+              </Field>
+
+              <Field label="Superficie (m²)" htmlFor="f-area">
+                <input
+                  id="f-area"
+                  type="number"
+                  value={form.area_m2}
+                  onChange={(e) => updateForm('area_m2', e.target.value)}
+                  placeholder="52"
+                  className={inputCls}
+                />
+              </Field>
+
+              <Field label="Estado" htmlFor="f-status">
+                <select
+                  id="f-status"
+                  value={form.status}
+                  onChange={(e) => updateForm('status', e.target.value)}
+                  className={inputCls}
+                >
+                  <option value="available">Disponible</option>
+                  <option value="reserved">Reservado</option>
+                  <option value="sold">Vendido</option>
+                </select>
+              </Field>
+
+              <Field
+                label="Features (separadas por | o coma)"
+                htmlFor="f-features"
+                className="md:col-span-2"
+              >
+                <input
+                  id="f-features"
+                  type="text"
+                  value={form.features}
+                  onChange={(e) => updateForm('features', e.target.value)}
+                  placeholder="pool | garage | balcony"
+                  className={inputCls}
+                />
+              </Field>
+
+              <Field label="Descripción" htmlFor="f-desc" className="md:col-span-2">
+                <textarea
+                  id="f-desc"
+                  rows={3}
+                  value={form.description}
+                  onChange={(e) => updateForm('description', e.target.value)}
+                  placeholder="Luminoso, vista abierta, cocina integrada…"
+                  className={inputCls + ' resize-y'}
+                />
+              </Field>
+            </div>
+
+            {createError && (
+              <p className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+                {createError}
+              </p>
+            )}
+
+            <div className="mt-5 flex flex-wrap gap-3">
+              <button
+                type="submit"
+                disabled={createPending}
+                className="rounded-full border border-ink bg-ink px-5 py-2 text-sm font-medium text-cream transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {createPending ? 'Guardando…' : 'Guardar propiedad'}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setForm(EMPTY_FORM)
+                  setCreateError(null)
+                }}
+                disabled={createPending}
+                className="rounded-full border border-beige-300 bg-white px-5 py-2 text-sm font-medium text-ink transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Limpiar
+              </button>
+            </div>
+          </form>
+        )}
+      </section>
+
+      {/* Bulk upload (CSV / JSON) — collapsible */}
+      <section className="mb-10 rounded-2xl border border-beige-100 bg-beige-50">
+        <button
+          type="button"
+          onClick={() => setBulkOpen((v) => !v)}
+          className="flex w-full items-center justify-between px-6 py-4 text-left"
+        >
+          <span className="font-sans text-base font-semibold text-ink">
+            Importar CSV o JSON
+          </span>
+          <span className="text-xs text-neutral-500">
+            {bulkOpen ? 'Cerrar' : 'Abrir'}
+          </span>
+        </button>
+
+        {bulkOpen && (
+          <div className="border-t border-beige-100 px-6 py-5">
+            {/* CSV format hint */}
+            <p className="mb-3 text-xs text-neutral-500">
+              Formato CSV esperado (primera fila = encabezado, features separados por |):
             </p>
-            {uploadResult.errors.length > 0 && (
-              <div className="mt-2">
-                <p className="mb-1 text-xs font-semibold text-neutral-500 uppercase tracking-wide">
-                  Errores por fila
+            <pre className="mb-4 overflow-x-auto rounded-lg bg-ink px-4 py-3 text-xs text-cream">
+              {`type,title,location,zona,price,currency,bedrooms,bathrooms,area_m2,description,features,status\napartment,"Depto Palermo","Palermo, CABA",centro,180000,USD,2,1,52,"Luminoso",pool|garage,available`}
+            </pre>
+
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              rows={8}
+              placeholder="Pegá tu CSV o JSON aquí…"
+              className="w-full rounded-xl border border-beige-200 bg-white p-3 font-mono text-xs text-ink placeholder-neutral-400 focus:border-beige-400 focus:outline-none focus:ring-2 focus:ring-beige-200 resize-y"
+            />
+
+            <div className="mt-3 flex flex-wrap gap-3">
+              <button
+                onClick={handleUploadCsv}
+                disabled={!input.trim() || pending}
+                className="rounded-full border border-ink bg-ink px-5 py-2 text-sm font-medium text-cream transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {pending ? 'Subiendo…' : 'Subir CSV'}
+              </button>
+
+              <button
+                onClick={handleUploadJson}
+                disabled={!input.trim() || pending}
+                className="rounded-full border border-beige-300 bg-white px-5 py-2 text-sm font-medium text-ink transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {pending ? 'Subiendo…' : 'Subir JSON'}
+              </button>
+            </div>
+
+            {uploadResult && (
+              <div className="mt-4 rounded-xl border border-beige-200 bg-white p-4 text-sm">
+                <p className="font-medium text-ink">
+                  {uploadResult.inserted} ítem{uploadResult.inserted !== 1 ? 's' : ''} insertado{uploadResult.inserted !== 1 ? 's' : ''} correctamente.
                 </p>
-                <ul className="space-y-1">
-                  {uploadResult.errors.map((e, i) => (
-                    <li key={i} className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
-                      <span className="font-semibold">Fila {e.row}:</span> {e.error}
-                    </li>
-                  ))}
-                </ul>
+                {uploadResult.errors.length > 0 && (
+                  <div className="mt-2">
+                    <p className="mb-1 text-xs font-semibold text-neutral-500 uppercase tracking-wide">
+                      Errores por fila
+                    </p>
+                    <ul className="space-y-1">
+                      {uploadResult.errors.map((e, i) => (
+                        <li key={i} className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                          <span className="font-semibold">Fila {e.row}:</span> {e.error}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
-          </div>
-        )}
 
-        {/* Upload error */}
-        {uploadError && (
-          <p className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
-            {uploadError}
-          </p>
+            {uploadError && (
+              <p className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+                {uploadError}
+              </p>
+            )}
+          </div>
         )}
       </section>
 
@@ -321,13 +680,22 @@ export function InventoryClient() {
             )}
           </h2>
 
-          <button
-            onClick={handleClearAll}
-            disabled={clearPending || items.length === 0}
-            className="rounded-full border border-red-200 bg-red-50 px-4 py-1.5 text-xs font-medium text-red-700 transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            {clearPending ? 'Borrando…' : 'Borrar todo'}
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={handleExportCsv}
+              disabled={items.length === 0}
+              className="rounded-full border border-beige-300 bg-white px-4 py-1.5 text-xs font-medium text-ink transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Exportar CSV
+            </button>
+            <button
+              onClick={handleClearAll}
+              disabled={clearPending || items.length === 0}
+              className="rounded-full border border-red-200 bg-red-50 px-4 py-1.5 text-xs font-medium text-red-700 transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {clearPending ? 'Borrando…' : 'Borrar todo'}
+            </button>
+          </div>
         </div>
 
         {loadError && (
@@ -352,6 +720,7 @@ export function InventoryClient() {
                   <th className="px-4 py-3 font-medium text-neutral-500">Tipo</th>
                   <th className="px-4 py-3 font-medium text-neutral-500">Título</th>
                   <th className="px-4 py-3 font-medium text-neutral-500">Ubicación</th>
+                  <th className="px-4 py-3 font-medium text-neutral-500">Zona</th>
                   <th className="px-4 py-3 font-medium text-neutral-500">Precio</th>
                   <th className="px-4 py-3 font-medium text-neutral-500">Estado</th>
                   <th className="px-4 py-3 font-medium text-neutral-500 text-right">
@@ -370,6 +739,15 @@ export function InventoryClient() {
                       {item.title}
                     </td>
                     <td className="px-4 py-3 text-neutral-600">{item.location}</td>
+                    <td className="px-4 py-3 text-neutral-600">
+                      {item.zona ? (
+                        <span className="inline-block rounded-full bg-beige-50 px-2.5 py-0.5 text-xs font-medium text-beige-600 border border-beige-200">
+                          {item.zona}
+                        </span>
+                      ) : (
+                        <span className="text-neutral-300">—</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-neutral-600">
                       {formatPrice(item.price, item.currency)}
                     </td>

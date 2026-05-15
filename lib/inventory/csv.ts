@@ -11,10 +11,11 @@ import type { InventoryItem } from '@/lib/inventory/store'
 
 const REQUIRED_COLUMNS = ['type', 'title', 'location'] as const
 const NUMERIC_COLUMNS = ['price', 'bedrooms', 'bathrooms', 'area_m2'] as const
-const EXPECTED_HEADER = [
+export const INVENTORY_CSV_HEADER = [
   'type',
   'title',
   'location',
+  'zona',
   'price',
   'currency',
   'bedrooms',
@@ -23,7 +24,7 @@ const EXPECTED_HEADER = [
   'description',
   'features',
   'status',
-]
+] as const
 
 type RowError = {
   row: number
@@ -58,7 +59,7 @@ export function parseInventoryCsv(csv: string): ParseResult {
       errors: [
         {
           row: 0,
-          error: `Encabezado CSV inválido. Columnas requeridas faltantes: ${missingRequired.join(', ')}. Se esperaba: ${EXPECTED_HEADER.join(',')}`,
+          error: `Encabezado CSV inválido. Columnas requeridas faltantes: ${missingRequired.join(', ')}. Se esperaba: ${INVENTORY_CSV_HEADER.join(',')}`,
         },
       ],
     }
@@ -121,6 +122,7 @@ export function parseInventoryCsv(csv: string): ParseResult {
       type: trimmed['type'],
       title: trimmed['title'],
       location: trimmed['location'],
+      zona: trimmed['zona'] || null,
       price: numericValues.price ?? null,
       currency: trimmed['currency'] || undefined,
       bedrooms: numericValues.bedrooms ?? null,
@@ -135,4 +137,32 @@ export function parseInventoryCsv(csv: string): ParseResult {
   }
 
   return { rows, errors }
+}
+
+// ─── exportInventoryCsv ───────────────────────────────────────────────────────
+
+/**
+ * Serializes inventory items to a CSV string with the same header as the import
+ * format, so the output is round-trippable through parseInventoryCsv().
+ */
+export function exportInventoryCsv(items: Partial<InventoryItem>[]): string {
+  const rows = items.map((item) => ({
+    type: item.type ?? '',
+    title: item.title ?? '',
+    location: item.location ?? '',
+    zona: item.zona ?? '',
+    price: item.price ?? '',
+    currency: item.currency ?? '',
+    bedrooms: item.bedrooms ?? '',
+    bathrooms: item.bathrooms ?? '',
+    area_m2: item.area_m2 ?? '',
+    description: item.description ?? '',
+    features: Array.isArray(item.features) ? item.features.join('|') : '',
+    status: item.status ?? '',
+  }))
+
+  return Papa.unparse(rows, {
+    columns: [...INVENTORY_CSV_HEADER],
+    quotes: true,
+  })
 }

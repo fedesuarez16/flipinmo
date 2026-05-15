@@ -9,6 +9,7 @@ export type InventoryItem = {
   type: string
   title: string
   location: string
+  zona: string | null
   price: number | null
   currency: string
   bedrooms: number | null
