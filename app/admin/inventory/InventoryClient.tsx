@@ -147,6 +147,7 @@ export function InventoryClient() {
   const [createError, setCreateError] = useState<string | null>(null)
 
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // ── Load items ─────────────────────────────────────────────────────────────
 
@@ -354,6 +355,24 @@ export function InventoryClient() {
       setCreateError('No se pudo conectar con el servidor.')
     } finally {
       setCreatePending(false)
+    }
+  }
+
+  // ── Load file into textarea ────────────────────────────────────────────────
+
+  const handleFilePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadError(null)
+    setUploadResult(null)
+    try {
+      const text = await file.text()
+      setInput(text)
+    } catch {
+      setUploadError('No se pudo leer el archivo.')
+    } finally {
+      // Reset so picking the same file again re-triggers onChange.
+      if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
 
@@ -609,6 +628,27 @@ export function InventoryClient() {
             <pre className="mb-4 overflow-x-auto rounded-lg bg-ink px-4 py-3 text-xs text-cream">
               {`type,title,location,zona,price,currency,bedrooms,bathrooms,area_m2,description,features,status\napartment,"Depto Palermo","Palermo, CABA",centro,180000,USD,2,1,52,"Luminoso",pool|garage,available`}
             </pre>
+
+            {/* File picker */}
+            <div className="mb-3 flex flex-wrap items-center gap-3">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv,.json,text/csv,application/json"
+                onChange={handleFilePick}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="rounded-full border border-beige-300 bg-white px-4 py-2 text-sm font-medium text-ink transition-opacity hover:opacity-80"
+              >
+                Adjuntar archivo…
+              </button>
+              <span className="text-xs text-neutral-500">
+                o pegá el contenido abajo
+              </span>
+            </div>
 
             <textarea
               ref={textareaRef}
