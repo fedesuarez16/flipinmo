@@ -5,7 +5,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Followup, LeadProfile } from '@/lib/chat/profile-types'
 import CrmPanel from './CrmPanel'
-import MobileProfileSheet from './MobileProfileSheet'
 
 type Role = 'assistant' | 'user'
 
@@ -516,19 +515,6 @@ export default function ChatClient() {
           />
         </aside>
       </main>
-
-      {/* ── Mobile FAB + bottom sheet — rendered outside <main> so fixed positioning
-           is not clipped by any overflow parent. Visible on mobile only (md:hidden
-           applied here so parent layout doesn't need to know). ── */}
-      <div className="md:hidden">
-        <div className="md:hidden">
-          <MobileProfileSheet
-            profile={leadProfile}
-            pulseFields={pulseFields}
-            followups={followups}
-          />
-        </div>
-      </div>
     </div>
   )
 }
